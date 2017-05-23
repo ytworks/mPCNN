@@ -9,7 +9,7 @@ class mPCNN(object):
 
 
     def __init__(self, feature_map, weights, W,
-                 ah = 1, vh = 1, at = 1, vt = 1):
+                 ah = 0.1, vh = 2, at = 0.1, vt = 2):
         picture_size = feature_map.shape
         self.H = np.zeros(picture_size)
         self.Y = np.zeros((picture_size[0], picture_size[1]))
@@ -20,7 +20,7 @@ class mPCNN(object):
         self.ah, self.vh, self.at, self.vt = ah, vh, at, vt
         self.W = W
         self.weights = weights
-        for i in range(2):
+        for i in range(40):
             self.train()
 
 
@@ -41,14 +41,14 @@ class mPCNN(object):
 
 
     def get_image(self):
-        return np.array(self.U / np.max(self.U) * 255.0).astype(np.int32)
+        return np.array((self.U - np.min(self.U)) / (np.max(self.U) - np.min(self.U)) * 255.0).astype(np.int32)
 
 if __name__ == '__main__':
     import cv2
     p1 = cv2.imread('JPCLN114_2_roi_cam0.png')
     p2 = cv2.imread('JPCLN114_2_roi_cam_img0.png')
-    feature_map = np.concatenate((p1/ 255.0, p2 / 255.0), axis = 2)
-    weights = np.array([0.1, 0.1, 0.1, 0.2, 0.2, 0.3])
+    feature_map = np.concatenate(((p1 -127.0)/ 127.0, (p2 -127)/ 127.0), axis = 2)
+    weights = np.array([0.5/3, 0.5/3, 0.5/3, 0.5/3, 0.5/3, 0.5/3])
     W = np.array([[1.0 / np.sqrt(2), 1.0, 1.0 / np.sqrt(2)],
          [1, 0.0, 1],
          [1.0 / np.sqrt(2), 1, 1.0 / np.sqrt(2)]])
