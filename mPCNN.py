@@ -48,7 +48,7 @@ if __name__ == '__main__':
     p1 = cv2.imread('JPCLN114_2_roi_cam0.png')
     p2 = cv2.imread('JPCLN114_2_roi_cam_img0.png')
     feature_map = np.concatenate(((p1 -127.0)/ 127.0, (p2 -127)/ 127.0), axis = 2)
-    weights = np.array([0.5/3, 0.5/3, 0.5/3, 0.5/3, 0.5/3, 0.5/3])
+    weights = np.array([0.1/3, 0.1/3, 0.1/3, 0.9/3, 0.9/3, 0.9/3])
     W = np.array([[1.0 / np.sqrt(2), 1.0, 1.0 / np.sqrt(2)],
          [1, 0.0, 1],
          [1.0 / np.sqrt(2), 1, 1.0 / np.sqrt(2)]])
@@ -56,4 +56,8 @@ if __name__ == '__main__':
                 weights = weights,
                 W = W)
     p3 = obj.get_image()
-    cv2.imwrite('sample.png', p3)
+    thresh = int(np.mean(p3))
+    max_pixel = 255
+    blur = cv2.GaussianBlur(p3.astype(np.uint8),(5,5),0)
+    ret3,th3 = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    cv2.imwrite('sample.png', th3)
